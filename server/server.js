@@ -21,9 +21,21 @@ var io = socketIO(server); // Get the websocket server
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  socket.emit('newMessage', {
+    from: 'Watson',
+    text: 'On the way',
+    createdAt: 83782
   });
+
+
+  socket.on('createMessage', (message) => {
+    console.log('createMessage',message)
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');;
+  });
+
 });
 
 app.use(express.static(publicPath)); // Default HTML directory
