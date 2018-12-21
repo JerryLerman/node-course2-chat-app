@@ -5,10 +5,12 @@ var socket = io(); // open web socket between client and server
 socket.on('connect', function () {
   console.log('Connected to server');
 
-  socket.emit('createMessage', {
-    from: 'Alex',
-    text: 'Mr. Watson--come here--I want to see you.'
-  });
+  // socket.emit('createMessage', {
+  //   from: 'Alex',
+  //   text: 'Mr. Watson--come here--I want to see you.'
+  // });
+
+  
 });
 
 // socket.on('connect', () => {
