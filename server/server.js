@@ -3,6 +3,8 @@ const http = require('http'); // Don't have to install
 const express = require('express');
 const socketIO = require('socket.io');
 
+const {generateMessage} = require('./utils/message');
+
 //Instead of -dirname + '/../public'
 // This results in \public instead of server\..\public
 const publicPath = path.join(__dirname, '../public');
@@ -21,27 +23,23 @@ var io = socketIO(server); // Get the websocket server
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat!',
-    createdAt: new Date().getTime()
-  });
+  socket.emit('newMessage',
+      generateMessage('Admin','Welcome to the chat!'));
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'A new user has entered the chat!',
-    createdAt: new Date().getTime()
-  });
+  // socket.emit('newMessage', {
+  //   from: 'Admin',
+  //   text: 'Welcome to the chat!',
+  //   createdAt: new Date().getTime()
+  // });
+
+  socket.broadcast.emit('newMessage',
+    generateMessage('Admin','A new user has entered the chat!'));
 
   socket.on('createMessage', (message) => {
     console.log('createMessage',message)
     //socket.emit sends a message to a single connection while
     // io.emit sends it to every single connection
-    // io.emit('newMessage', {
-    //   from: message.from,
-    //   text: message.text,
-    //   createdAt: new Date().getTime()
-    // });
+  io.emit('newMessage', generateMessage(message.from, message.text));
 
     // Using boradcast we can send a message (emit) to everyone but one user
     // Send message to everyone other than this socket
