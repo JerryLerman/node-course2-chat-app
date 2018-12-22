@@ -3,7 +3,7 @@ const http = require('http'); // Don't have to install
 const express = require('express');
 const socketIO = require('socket.io');
 
-const {generateMessage} = require('./utils/message');
+const {generateMessage, generateLocationMessage} = require('./utils/message');
 
 //Instead of -dirname + '/../public'
 // This results in \public instead of server\..\public
@@ -41,7 +41,6 @@ io.on('connection', (socket) => {
     //socket.emit sends a message to a single connection while
     // io.emit sends it to every single connection
   io.emit('newMessage', generateMessage(message.from, message.text));
-
     // Using boradcast we can send a message (emit) to everyone but one user
     // Send message to everyone other than this socket
     // socket.broadcast.emit('newMessage', {
@@ -49,6 +48,10 @@ io.on('connection', (socket) => {
     //   text: message.text,
     //   createdAt: new Date().getTime()
     // });
+  });
+
+  socket.on('createLocationMessage', (coords) => {
+    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
   });
 
   socket.on('disconnect', () => {
