@@ -18,7 +18,17 @@ function scrollToBottom() {
 
 // For compatibility with all browsers, use regular funcations
 socket.on('connect', function () {
-  console.log('Connected to server');
+  var params = jQuery.deparam(window.location.search);
+
+  //"join" is a custom event
+  socket.emit('join', params, function (err) {
+    if (err) {
+      alert(err)
+      window.location.href = '/';
+    } else {
+      console.log(`\"${params.name}\" has joined \"${params.room}\"`);
+    }
+  })
 
   // socket.emit('createMessage', {
   //   from: 'Alex',
@@ -38,7 +48,19 @@ socket.on('disconnect', function () {
   console.log('Disconnected from server');
 });
 
-// Mustache is allowing dynamic valuues to get inserted
+socket.on('updateUserList', function(users) {
+  var ol = jQuery('<ol></ol>');
+
+  users.forEach(function (user) {
+    ol.append(jQuery('<li></li>').text(user));
+  });
+
+  jQuery('#users').html(ol);
+
+  console.log('Users list', users);
+});
+
+// Mustache is allowing dynamic values to get inserted
 socket.on('newMessage', function (message) {
   var formattedTime = moment(message.createdAt).format('h:mm a');
   // Fetch the template from the html
